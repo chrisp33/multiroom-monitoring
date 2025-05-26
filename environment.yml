@@ -1,0 +1,30 @@
+name: py_rpi
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - ipywidgets
+  - scipy
+  - statsmodels
+  - openpyxl
+  - pyserial
+  - pynmea2
+
+  # Only if you're using GPS and sensor data logging
+  - jupyterlab  # Optional if you use it for dashboarding or quick plots
+
+  - pip:
+      - adafruit-blinka
+      - adafruit-circuitpython-bme280
+      - adafruit-circuitpython-sgp40
+      - adafruit-circuitpython-ltr390
+      - adafruit-circuitpython-tsl2591
+      - adafruit-circuitpython-ccs811
+      - adafruit-circuitpython-sht31d
+      - smbus2
+      - rpi-gpio
