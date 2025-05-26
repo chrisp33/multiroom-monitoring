@@ -1,7 +1,6 @@
 import csv
 import os
-from environmental_sensors_v2_updated import *
-#from environmental_sensors_indoor import *
+from environmental_sensors import *
 
 def log_sensor_data_to_csv(filename="sensor_log_1.csv"):
     """
