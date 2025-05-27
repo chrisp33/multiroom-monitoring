@@ -56,5 +56,6 @@ python run_experiment.py
 	•	PMS5003 uses /dev/serial0 by default.
 	•	VOC may take an hour to equilibrate and stabilize. 
 	•   Currently running Pi 4B with the latest Debian Bookworm
+	•	Ensure serial ports are active on Pi. 
 
 ⸻
