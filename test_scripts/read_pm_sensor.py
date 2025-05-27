@@ -24,6 +24,7 @@ def read_pm_data():
         return None, None, None
     finally:
         ser.close()
+
 try:
     while True:
         read_pm_data()

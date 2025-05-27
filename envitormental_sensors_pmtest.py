@@ -51,9 +51,6 @@ bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
         
 def get_location(port="/dev/ttyACM0", baudrate=9600, timeout=1):
     """Returns (timestamp, latitude, longitude) with full timestamp from GPS."""
-    import serial
-    import pynmea2
-
     ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
     try:
         while True:
@@ -132,8 +129,29 @@ def get_ir():
 # -------------------------
 # Get PM Data
 # -------------------------
+def get_pm():
+    def sync_to_frame(ser):
+        while True:
+            b1 = ser.read(1)
+            if b1 == b'\x42':
+                b2 = ser.read(1)
+                if b2 == b'\x4d':
+                    return b'\x42' + b'\x4d' + ser.read(30)
 
-
+    def read_pm_data():
+        ser = serial.Serial("/dev/serial0", baudrate=9600, timeout=2)
+        try:
+            data = sync_to_frame(ser)
+            frame = struct.unpack(">HHHHHHHHHHHHHH", data[4:])
+            pm1_0 = frame[0]
+            pm2_5 = frame[1]
+            pm10 = frame[2]
+            return pm1_0, pm2_5, pm10
+        except Exception as e:
+            print("Error reading PM sensor:", e)
+            return None, None, None
+        finally:
+            ser.close()
 
 
 
@@ -160,6 +178,7 @@ def get_all_sensor_data():
     ir = get_ir()
     lux = get_lux()
     uv_raw, uv_index = get_uv()
+    pm1_0, pm2_5, pm10 = get_pm()
 
     return {
         "timestamp": timestamp,
@@ -173,5 +192,8 @@ def get_all_sensor_data():
         "visible": vis,
         "infrared": ir,
         "lux": lux,
+        "pm1_0": pm1_0,
+        "pm2_5": pm2_5,
+        "pm10": pm10
 
     }
