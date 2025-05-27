@@ -1,6 +1,4 @@
-import adafruit_tsl2591
-
-# environmental_sensors.py
+# all_sensors.py
 
 import time
 import datetime
@@ -11,6 +9,7 @@ import busio
 import adafruit_ltr390
 import adafruit_sgp40
 from adafruit_bme280 import basic as adafruit_bme280
+import adafruit_tsl2591
 import struct
 # -------------------------
 # Initialize I2C and Sensors
@@ -26,7 +25,6 @@ tsl = adafruit_tsl2591.TSL2591(i2c)
 
 # VOC Sensor (initialized for global use after equilibration)
 sgp = adafruit_sgp40.SGP40(i2c)
-
 
 # Initialize sensors
 bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)

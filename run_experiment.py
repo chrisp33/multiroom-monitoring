@@ -2,7 +2,7 @@ import csv
 import os
 from all_sensors import *
 
-def log_sensor_data_to_csv(filename="data1"):
+def log_sensor_data_to_csv(filename="data.csv"):
     """
     Collects full sensor data and appends it to a CSV file.
     Creates the file and writes headers if it does not exist.
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         equilibrate_voc(5)  # Warm up the VOC sensor before logging
 
         while True:
-            log_sensor_data_to_csv("data1.csv")
+            log_sensor_data_to_csv("data.csv")
             time.sleep(60)  # Wait 60 seconds between measurements
 
     except KeyboardInterrupt:
