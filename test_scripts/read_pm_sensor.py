@@ -17,9 +17,16 @@ def read_pm_data():
         pm1_0 = frame[0]
         pm2_5 = frame[1]
         pm10 = frame[2]
+        print(f"PM1.0: {pm1_0}, PM2.5: {pm2_5}, PM10: {pm10}")
         return pm1_0, pm2_5, pm10
     except Exception as e:
         print("Error reading PM sensor:", e)
         return None, None, None
     finally:
         ser.close()
+try:
+    while True:
+        read_pm_data()
+except KeyboardInterrupt:
+    ser.close()
+    print("Serial port closed.")
