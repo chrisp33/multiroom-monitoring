@@ -11,6 +11,7 @@ import busio
 import adafruit_ltr390
 import adafruit_sgp40
 from adafruit_bme280 import basic as adafruit_bme280
+import struct
 # -------------------------
 # Initialize I2C and Sensors
 # -------------------------
@@ -152,9 +153,7 @@ def get_pm():
             return None, None, None
         finally:
             ser.close()
-
-
-
+    return read_pm_data()
 
 
 # -------------------------
