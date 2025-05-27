@@ -57,7 +57,4 @@ python run_experiment.py
 	•	VOC may take an hour to equilibrate and stabilize. 
 	•   Currently running Pi 4B with the latest Debian Bookworm
 
-
-    pm wiring diagram: ![alt text](image.png)
-
 ⸻
