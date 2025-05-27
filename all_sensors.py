@@ -35,21 +35,7 @@ bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
 # GPS: get_location
 # -------------------------
 
-#def get_location(port="/dev/ttyACM0", baudrate=9600, timeout=1):
-#    """Returns (timestamp, latitude, longitude) from GPS module."""
-#    ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
-#    try:
-#        while True:
-#            line = ser.readline().decode('ascii', errors='replace')
-#            if line.startswith('$GPGGA') or line.startswith('$GPRMC'):
-#                try:
-#                    msg = pynmea2.parse(line)
-#                    return msg.timestamp, msg.latitude, msg.longitude
-#                except pynmea2.ParseError:
-#                    continue
-#    finally:
-#        ser.close()
-        
+       
 def get_location(port="/dev/ttyACM0", baudrate=9600, timeout=1):
     """Returns (timestamp, latitude, longitude) with full timestamp from GPS."""
     ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
@@ -117,11 +103,9 @@ def get_lux():
     """Return ambient light in lux."""
     return tsl.lux
 
-
 def get_visible():
     """Return raw visible light value."""
     return tsl.visible
-
 
 def get_ir():
     """Return raw infrared light value."""
@@ -155,29 +139,83 @@ def get_pm():
             ser.close()
     return read_pm_data()
 
-
 # -------------------------
 # Combined Sensor Data Collection
 # -------------------------
 
 def get_all_sensor_data():
     """
-    vis = get_visible()
-    ir = get_ir()
-    lux = get_lux()
-    Returns a dictionary containing:
-    - GPS: timestamp, latitude, longitude
-    - UV sensor: uv_raw, uv_index
-    - VOC sensor: voc_index, temperature (°C), humidity (%RH)
-    Assumes VOC sensor has been equilibrated.
+    Collects data from a suite of environmental sensors and aggregates the results into a single dictionary.
+
+    The function retrieves data for:
+        - VOC sensor: volatile organic compounds index, temperature (°C), and relative humidity (%)
+        - UV sensor: raw UV measurement and computed UV index
+        - Light sensors: visible light, infrared light, and lux (illumination)
+        - Particulate matter sensors: PM1.0, PM2.5, and PM10
+
+    Returns:
+            dict: A dictionary containing the following keys:
+                    "timestamp": The time when the data was collected.
+                    "latitude": The geographic latitude.
+                    "longitude": The geographic longitude.
+                    "voc_index": The sensor output indicating the VOC index.
+                    "temperature_C": Temperature in degrees Celsius.
+                    "humidity_percent": Relative humidity as a percentage.
+                    "uv_raw": Raw data reading from the UV sensor.
+                    "uv_index": Computed UV index value.
+                    "visible": Measurement from the visible light sensor.
+                    "infrared": Measurement from the infrared sensor.
+                    "lux": Light intensity measured in lux.
+                    "pm1_0": Concentration of particulate matter with diameter 1.0 µm.
+                    "pm2_5": Concentration of particulate matter with diameter 2.5 µm.
+                    "pm10": Concentration of particulate matter with diameter 10 µm.
+
+    Note:
+            Ensure that sensors (particularly the VOC sensor) are properly calibrated and, if applicable,
+            "equilibrated" prior to data collection.
     """
-    timestamp, lat, lon = get_location()
-    voc_index, temp, humidity = get_voc()
-    vis = get_visible()
-    ir = get_ir()
-    lux = get_lux()
-    uv_raw, uv_index = get_uv()
-    pm1_0, pm2_5, pm10 = get_pm()
+
+    try:
+        timestamp, lat, lon = get_location()
+    except Exception as e:
+        print("Error getting GPS data:", e)
+        timestamp, lat, lon = None, None, None
+
+    try:
+        voc_index, temp, humidity = get_voc()
+    except Exception as e:
+        print("Error getting VOC data:", e)
+        voc_index, temp, humidity = None, None, None
+
+    try:
+        vis = get_visible()
+    except Exception as e:
+        print("Error getting visible light data:", e)
+        vis = None
+
+    try:
+        ir = get_ir()
+    except Exception as e:
+        print("Error getting infrared data:", e)
+        ir = None
+
+    try:
+        lux = get_lux()
+    except Exception as e:
+        print("Error getting lux data:", e)
+        lux = None
+
+    try:
+        uv_raw, uv_index = get_uv()
+    except Exception as e:
+        print("Error getting UV data:", e)
+        uv_raw, uv_index = None, None
+
+    try:
+        pm1_0, pm2_5, pm10 = get_pm()
+    except Exception as e:
+        print("Error getting PM data:", e)
+        pm1_0, pm2_5, pm10 = None, None, None
 
     return {
         "timestamp": timestamp,
@@ -194,5 +232,4 @@ def get_all_sensor_data():
         "pm1_0": pm1_0,
         "pm2_5": pm2_5,
         "pm10": pm10
-
     }

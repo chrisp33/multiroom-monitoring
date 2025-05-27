@@ -1,8 +1,8 @@
 import csv
 import os
-from environmental_sensors import *
+from all_sensors import *
 
-def log_sensor_data_to_csv(filename="sensor_log_1.csv"):
+def log_sensor_data_to_csv(filename="data1"):
     """
     Collects full sensor data and appends it to a CSV file.
     Creates the file and writes headers if it does not exist.
@@ -11,7 +11,8 @@ def log_sensor_data_to_csv(filename="sensor_log_1.csv"):
     fieldnames = [
         "timestamp", "latitude", "longitude",
         "voc_index", "temperature_C", "humidity_percent",
-        "visible", "infrared", "lux", "uv_raw", "uv_index"
+        "visible", "infrared", "lux", "uv_raw", "uv_index",
+        "pm1_0", "pm2_5", "pm10"
     ]
 
     file_exists = os.path.isfile(filename)
@@ -33,10 +34,10 @@ def log_sensor_data_to_csv(filename="sensor_log_1.csv"):
         
 if __name__ == "__main__":
     try:
-        equilibrate_voc()  # Warm up the VOC sensor before logging
+        equilibrate_voc(5)  # Warm up the VOC sensor before logging
 
         while True:
-            log_sensor_data_to_csv("living_room_data_v1.csv")
+            log_sensor_data_to_csv("data1.csv")
             time.sleep(60)  # Wait 60 seconds between measurements
 
     except KeyboardInterrupt:
