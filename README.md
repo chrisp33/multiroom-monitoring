@@ -46,13 +46,18 @@ python run_experiment.py
 
 💾 Sample Output
 
-timestamp,latitude,longitude,voc_index,temperature_C,humidity_percent,visible,infrared,lux,uv_raw,uv_index,pm1_0,pm2_5,pm10
-2025-05-27T20:09:21+00:00,39.0959455,-198.23472566666667,0.24,22.1,43.0,45,251,102,10,20,0,0,0
+| timestamp                  | latitude    | longitude         | voc_index | temperature_C | humidity_percent | visible | infrared | lux | uv_raw | uv_index | pm1_0 | pm2_5 | pm10 |
+|----------------------------|-------------|-------------------|-----------|---------------|------------------|---------|----------|-----|--------|----------|-------|-------|------|
+| 2025-05-27T20:09:21+00:00   | 39.0959455  | -198.23472566666667 | 0.24      | 22.1          | 43.0             | 45      | 251      | 102 | 10     | 20       | 0     | 0     | 0    |
 
 🧪 Notes
 	•	Ensure all sensors are wired properly before running.
 	•	GPS is optional—errors are handled gracefully if not connected.
 	•	PMS5003 uses /dev/serial0 by default.
-    •   VOC may take an hour to equilibrate and stabilize. 
+	•	VOC may take an hour to equilibrate and stabilize. 
+	•   Currently running Pi 4B with the latest Debian Bookworm
+
+
+    pm wiring diagram: ![alt text](image.png)
 
 ⸻
