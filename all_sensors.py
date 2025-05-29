@@ -35,27 +35,34 @@ bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
 
        
 def get_location(port="/dev/ttyACM0", baudrate=9600, timeout=1):
-    """Returns (timestamp, latitude, longitude) with full timestamp from GPS."""
-    ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
+    """
+    Returns (timestamp, latitude, longitude) with full timestamp from GPS.
+    Falls back to None values if GPS is not available.
+    """
+
     try:
-        while True:
-            line = ser.readline().decode('ascii', errors='replace')
-            if line.startswith('$GPRMC'):
-                try:
-                    msg = pynmea2.parse(line)
-                    if msg.status == 'A':  # Valid fix
-                        # Combine date and time into full timestamp
-                        date = msg.datestamp  # datetime.date
-                        time = msg.timestamp  # datetime.time
-                        full_dt = datetime.datetime.combine(date, time).isoformat()
-                        return full_dt, msg.latitude, msg.longitude
-                except pynmea2.ParseError:
-                    continue
-            elif line.startswith('$GPGGA'):
-                # Optional fallback if GPRMC fails
-                continue
-    finally:
-        ser.close()
+        ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
+        try:
+            while True:
+                line = ser.readline().decode('ascii', errors='replace')
+                if line.startswith('$GPRMC'):
+                    try:
+                        msg = pynmea2.parse(line)
+                        if msg.status == 'A':  # Valid fix
+                            date = msg.datestamp
+                            time = msg.timestamp
+                            full_dt = datetime.datetime.combine(date, time).isoformat()
+                            return full_dt, msg.latitude, msg.longitude
+                    except pynmea2.ParseError:
+                        continue
+                elif line.startswith('$GPGGA'):
+                    continue  # Optional fallback
+        finally:
+            ser.close()
+    except Exception as e:
+        print(f"[GPS ERROR] {e}")
+        # Return None values if GPS fails
+        return None, None, None
 
 # -------------------------
 # UV Sensor: get_uv
