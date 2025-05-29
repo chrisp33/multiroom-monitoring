@@ -186,7 +186,7 @@ def get_all_sensor_data():
             raise ValueError("GPS fix not available")
     except Exception as e:
         print(f"[WARNING] GPS unavailable: {e}")
-        timestamp = datetime.datetime.now().isoformat()
+        timestamp = datetime.datetime.utcnow().isoformat()
         lat, lon = 0.0, 0.0
 
     try:
