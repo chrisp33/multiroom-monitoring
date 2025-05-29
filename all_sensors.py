@@ -37,31 +37,30 @@ bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
 def get_location(port="/dev/ttyACM0", baudrate=9600, timeout=1):
     """
     Returns (timestamp, latitude, longitude) with full timestamp from GPS.
-    Falls back to None values if GPS is not available.
+    Falls back to None values if GPS is not available within 10 seconds.
     """
-
     try:
         ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
         try:
-            while True:
+            start_time = time.time()
+            while time.time() - start_time < 10:  # Give GPS 10 seconds
                 line = ser.readline().decode('ascii', errors='replace')
                 if line.startswith('$GPRMC'):
                     try:
                         msg = pynmea2.parse(line)
                         if msg.status == 'A':  # Valid fix
                             date = msg.datestamp
-                            time = msg.timestamp
-                            full_dt = datetime.datetime.combine(date, time).isoformat()
+                            t = msg.timestamp
+                            full_dt = datetime.datetime.combine(date, t).isoformat()
                             return full_dt, msg.latitude, msg.longitude
                     except pynmea2.ParseError:
                         continue
-                elif line.startswith('$GPGGA'):
-                    continue  # Optional fallback
+            print("[GPS] Timeout: No valid GPS fix received")
+            return None, None, None
         finally:
             ser.close()
     except Exception as e:
         print(f"[GPS ERROR] {e}")
-        # Return None values if GPS fails
         return None, None, None
 
 # -------------------------
