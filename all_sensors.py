@@ -182,9 +182,12 @@ def get_all_sensor_data():
 
     try:
         timestamp, lat, lon = get_location()
+        if timestamp is None:
+            raise ValueError("GPS fix not available")
     except Exception as e:
-        print("Error getting GPS data:", e)
-        timestamp, lat, lon = None, None, None
+        print(f"[WARNING] GPS unavailable: {e}")
+        timestamp = datetime.datetime.now().isoformat()
+        lat, lon = 0.0, 0.0
 
     try:
         voc_index, temp, humidity = get_voc()
